@@ -5,6 +5,12 @@ using UnityEngine.InputSystem;
 
 public class Cannon : MonoBehaviour
 {
+
+    private AudioSource audioSource;
+
+    public AudioClip shootingSound;
+
+
     private InputAction shoot;
     public GameObject bullet;
     public GameObject explosion;  
@@ -17,6 +23,15 @@ public class Cannon : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+
         myPlayerInput.currentActionMap.Enable();
         shoot = myPlayerInput.currentActionMap.FindAction("Shoot");
 
@@ -30,7 +45,18 @@ public class Cannon : MonoBehaviour
         {
             isFiring = true;
             StartCoroutine(FireContinuously());
+
         }
+
+        if (this == null)
+        {
+            return; 
+        }
+    }
+
+    void OnDestroy()
+    {
+        shoot.performed -= Shoot_performed;
     }
 
     private void Shoot_canceled(InputAction.CallbackContext obj)
@@ -43,6 +69,10 @@ public class Cannon : MonoBehaviour
         while (isFiring)
         {
             FireBullet();
+            if (shootingSound != null)
+            {
+                audioSource.PlayOneShot(shootingSound);
+            }
             yield return new WaitForSeconds(fireRate); 
         }
     }

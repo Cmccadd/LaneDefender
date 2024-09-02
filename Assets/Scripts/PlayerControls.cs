@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,10 +9,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerControls : MonoBehaviour
 {
+    public GameManager manager;
     public PlayerInput myPlayerInput;
     private InputAction move;
     private bool isMoving;
-    public GameManager manager;
 
     public Rigidbody2D tank;
     public int moveSpeed = (int) 5f;

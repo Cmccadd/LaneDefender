@@ -148,6 +148,8 @@ MonoBehaviour:
   health: 4
   hitPauseDuration: 1
   animator: {fileID: 7211890052618646164}
+  hitSound: {fileID: 8300000, guid: b81fce6641e509049842e8c96de3189c, type: 3}
+  deathSound: {fileID: 8300000, guid: 10f9f0fc04e5da141a9b42ababbb6d0b, type: 3}
 --- !u!95 &7211890052618646164
 Animator:
   serializedVersion: 5

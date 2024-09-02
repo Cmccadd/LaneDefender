@@ -4,40 +4,65 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public float moveSpeed = 2f;
-    public float health = 3f; 
+    public float health = 3f;
     public float hitPauseDuration = 1f;
     public Animator animator;
 
-    private bool isHit = false; 
-    private static readonly int HitHash = Animator.StringToHash("IsHit"); 
+    private bool isHit = false;
+    private static readonly int HitHash = Animator.StringToHash("IsHit");
+
+    private GameManager gameManager;
+
+    public AudioClip hitSound;
+    public AudioClip deathSound;
+
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+    }
 
     void Update()
     {
         if (!isHit)
         {
-            // Move the enemy forward if it is not currently hit
             transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if the collision is with an object tagged as "Bullet"
         if (collision.gameObject.CompareTag("Bullet") && !isHit)
         {
             TakeDamage(1f);
+        }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            gameManager.Lives();
+            Destroy(gameObject);
         }
     }
 
     private void TakeDamage(float damage)
     {
-       
         health -= damage;
 
-      
+        if (hitSound != null)
+        {
+            audioSource.PlayOneShot(hitSound);
+        }
+
         StartCoroutine(HandleHit());
 
-       
         if (health <= 0)
         {
             Die();
@@ -48,13 +73,8 @@ public class Enemy : MonoBehaviour
     {
         if (!isHit)
         {
-          
             SetHit(true);
-
-          
             yield return new WaitForSeconds(hitPauseDuration);
-
-           
             SetHit(false);
         }
     }
@@ -64,18 +84,24 @@ public class Enemy : MonoBehaviour
         isHit = value;
         if (animator != null)
         {
-            animator.SetBool(HitHash, value); 
+            animator.SetBool(HitHash, value);
         }
     }
 
     private void Die()
     {
-      
+        if (deathSound != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+
         if (animator != null)
         {
             animator.SetTrigger("Die");
         }
 
-        Destroy(gameObject, 1f); 
+        gameManager.Score();
+
+        Destroy(gameObject, 1f);
     }
 }

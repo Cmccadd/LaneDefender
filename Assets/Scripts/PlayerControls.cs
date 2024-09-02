@@ -10,7 +10,6 @@ public class PlayerControls : MonoBehaviour
     public PlayerInput myPlayerInput;
     private InputAction move;
     private bool isMoving;
-    private bool shot;
     public GameManager manager;
 
     public Rigidbody2D tank;
